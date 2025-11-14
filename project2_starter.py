@@ -59,21 +59,12 @@ class Character:
         self.health = health
         self.strength = strength
         self.magic = magic
-        self.weapon = None
 
     def attack(self, target):
-        weapon_bonus = 0
-        if self.weapon is not None:
-            weapon_bonus = self.weapon.damage_bonus
-
-        damage = self.strength + weapon_bonus
-
-        if damage < 0:
-            damage = 0
-
-        print(f"{self.name} attacks {target.name} for {damage} damage.")
-        target.take_damage(damage)
-
+        damage = self.strength
+        target.health = target.health - damage
+        print(self.name, "attacks for", damage)
+        
     def take_damage(self, damage):
         self.health = self.health - damage
         if self.health < 0:
