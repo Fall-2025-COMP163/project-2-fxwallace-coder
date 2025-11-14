@@ -141,7 +141,7 @@ class Weapon:
         self.damage_bonus = damage_bonus
 
     def display_info(self):
-        """Shows weapon details. Returns None as required."""
+        """Shows weapon details."""
         print("Weapon:", self.name)
         print("Damage Bonus:", self.damage_bonus)
 
