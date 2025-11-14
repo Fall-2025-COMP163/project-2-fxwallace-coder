@@ -59,92 +59,109 @@ class Character:
         self.health = health
         self.strength = strength
         self.magic = magic
+        self.weapon = None
 
     def attack(self, target):
-        damage = self.strength
-        print(f"{self.name} attacks {target.name} for {damage} damage!")
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, self.strength + weapon_bonus)  # *** FIX: always >= 5 ***
+        print(f"{self.name} attacks {target.name} for {damage} physical damage.")
         target.take_damage(damage)
-
+        
     def take_damage(self, damage):
-        self.health -= damage
-        if self.health < 0:
-            self.health = 0
-        print(f"{self.name} now has {self.health} health.")
-
+        self.health = max(0, self.health - damage)
+        print(f"{self.name} takes {damage} damage. (Health now: {self.health})")
+        
     def display_stats(self):
-        print(f"{self.name} - Health: {self.health}, Strength: {self.strength}, Magic: {self.magic}")
+        print(f"Name: {self.name}")
+        print(f" Health: {self.health}")
+        print(f" Strength: {self.strength}")
+        print(f" Magic: {self.magic}")
+        if self.weapon:
+            print(f" Weapon: {self.weapon.name} (+{self.weapon.damage_bonus} dmg)")
+        else:
+            print(f" Weapon: None")
 
-# ----------------------------- Player Class ---------------------------------
+
 class Player(Character):
     def __init__(self, name, character_class, health, strength, magic):
         super().__init__(name, health, strength, magic)
         self.character_class = character_class
         self.level = 1
         self.experience = 0
-
+        
     def display_stats(self):
         super().display_stats()
-        print(f"Class: {self.character_class}, Level: {self.level}, XP: {self.experience}")
+        print(f" Class: {self.character_class}")
+        print(f" Level: {self.level}")
+        print(f" Experience: {self.experience}")
 
-# ----------------------------- Warrior --------------------------------------
+
 class Warrior(Player):
     def __init__(self, name):
         super().__init__(name, "Warrior", 120, 15, 5)
-
+        
     def attack(self, target):
-        damage = self.strength + 5
-        print(f"{self.name} swings a sword at {target.name} for {damage} damage!")
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, self.strength + 5 + weapon_bonus)  # *** FIX ***
+        print(f"{self.name} (Warrior) slashes {target.name} for {damage} damage.")
         target.take_damage(damage)
-
+        
     def power_strike(self, target):
-        damage = self.strength * 2
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, self.strength * 2 + 10 + weapon_bonus)
         print(f"{self.name} uses Power Strike on {target.name} for {damage} damage!")
         target.take_damage(damage)
 
-# ----------------------------- Mage -----------------------------------------
+
 class Mage(Player):
     def __init__(self, name):
         super().__init__(name, "Mage", 80, 8, 20)
-
+        
     def attack(self, target):
-        damage = self.magic
-        print(f"{self.name} casts a spell on {target.name} for {damage} damage!")
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, self.magic + weapon_bonus)  # *** FIX ***
+        print(f"{self.name} (Mage) casts a spell at {target.name} for {damage} magic damage.")
         target.take_damage(damage)
-
+        
     def fireball(self, target):
-        damage = self.magic * 2
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, self.magic * 2 + 8 + weapon_bonus)
         print(f"{self.name} hurls a Fireball at {target.name} for {damage} damage!")
         target.take_damage(damage)
 
-# ----------------------------- Rogue ----------------------------------------
+
 class Rogue(Player):
     def __init__(self, name):
         super().__init__(name, "Rogue", 90, 12, 10)
-
+        
     def attack(self, target):
-        crit = random.randint(1, 10)
-        if crit <= 3:
-            damage = self.strength * 2
-            print(f"{self.name} lands a CRITICAL hit on {target.name} for {damage} damage!")
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        is_crit = random.randint(1, 10) <= 3
+        base = self.strength + weapon_bonus
+
+        if is_crit:
+            damage = max(5, base * 2)   # *** FIX ***
+            print(f"{self.name} (Rogue) performs a CRITICAL attack on {target.name} for {damage} damage!")
         else:
-            damage = self.strength
-            print(f"{self.name} attacks {target.name} for {damage} damage.")
-        target.take_damage(damage)
+            damage = max(5, base)       # *** FIX ***
+            print(f"{self.name} (Rogue) quickly strikes {target.name} for {damage} damage.")
 
+        target.take_damage(damage)
+        
     def sneak_attack(self, target):
-        damage = self.strength * 2
-        print(f"{self.name} uses Sneak Attack on {target.name} for {damage} damage!")
+        weapon_bonus = self.weapon.damage_bonus if self.weapon else 0
+        damage = max(5, (self.strength + weapon_bonus) * 2 + 5)
+        print(f"{self.name} performs a Sneak Attack on {target.name} for {damage} damage!")
         target.take_damage(damage)
 
-# ----------------------------- Weapon ---------------------------------------
+
 class Weapon:
     def __init__(self, name, damage_bonus):
         self.name = name
         self.damage_bonus = damage_bonus
-
+        
     def display_info(self):
-        print(f"Weapon: {self.name}, Bonus Damage: {self.damage_bonus}")
-
+        print(f"Weapon: {self.name} (Damage Bonus: +{self.damage_bonu
 # ----------------------------- Testing --------------------------------------
 if __name__ == "__main__":
     print("=== CHARACTER ABILITIES SHOWCASE ===")
