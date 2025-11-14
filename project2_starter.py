@@ -103,14 +103,9 @@ class Warrior(Player):
         super().__init__(name, "Warrior", 120, 15, 5)
 
     def attack(self, target):
-        weapon_bonus = 0
-        if self.weapon is not None:
-            weapon_bonus = self.weapon.damage_bonus
-
-        damage = self.strength + 5 + weapon_bonus
-
-        if damage < 0:
-            damage = 0
+        damage = self.strength + 5
+        target.health = target.health - damage
+        print(self.name, "slashes for", damage)
 
         print(f"{self.name} (Warrior) slashes {target.name} for {damage} damage.")
         target.take_damage(damage)
@@ -134,14 +129,9 @@ class Mage(Player):
         super().__init__(name, "Mage", 80, 8, 20)
 
     def attack(self, target):
-        weapon_bonus = 0
-        if self.weapon is not None:
-            weapon_bonus = self.weapon.damage_bonus
-
-        damage = self.magic + weapon_bonus
-
-        if damage < 0:
-            damage = 0
+        damage = self.magic + 10
+        target.health = target.health - damage
+        print(self.name, "casts a spell for", damage)
 
         print(f"{self.name} (Mage) casts a spell at {target.name} for {damage} damage.")
         target.take_damage(damage)
@@ -164,27 +154,11 @@ class Rogue(Player):
     def __init__(self, name):
         super().__init__(name, "Rogue", 90, 12, 10)
 
+    class Rogue(Character):
     def attack(self, target):
-        weapon_bonus = 0
-        if self.weapon is not None:
-            weapon_bonus = self.weapon.damage_bonus
-
-        # 30% critical chance
-        roll = random.randint(1, 10)
-        base_damage = self.strength + weapon_bonus
-
-        if roll <= 3:
-            damage = base_damage * 2
-            print(f"{self.name} (Rogue) performs a CRITICAL strike on {target.name}!")
-        else:
-            damage = base_damage
-            print(f"{self.name} (Rogue) strikes {target.name}.")
-
-        if damage < 0:
-            damage = 0
-
-        print(f"Damage dealt: {damage}")
-        target.take_damage(damage)
+        damage = self.strength + 3
+        target.health = target.health - damage
+        print(self.name, "backstabs for", damage)
 
     def sneak_attack(self, target):
         weapon_bonus = 0
