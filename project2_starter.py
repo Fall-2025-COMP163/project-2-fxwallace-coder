@@ -62,35 +62,44 @@ class Character:
         self.weapon = None
 
     def attack(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = self.strength + bonus
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = self.strength + weapon_bonus
+
+        if damage < 0:
+            damage = 0
+
         print(f"{self.name} attacks {target.name} for {damage} damage.")
         target.take_damage(damage)
-        
+
     def take_damage(self, damage):
-        self.health -= damage
+        self.health = self.health - damage
         if self.health < 0:
             self.health = 0
+
         print(f"{self.name} takes {damage} damage. (Health now: {self.health})")
-        
+
     def display_stats(self):
         print(f"Name: {self.name}")
         print(f" Health: {self.health}")
         print(f" Strength: {self.strength}")
         print(f" Magic: {self.magic}")
-        if self.weapon:
-            print(f" Weapon: {self.weapon.name} (+{self.weapon.damage_bonus})")
-        else:
+
+        if self.weapon is None:
             print(" Weapon: None")
+        else:
+            print(f" Weapon: {self.weapon.name} (+{self.weapon.damage_bonus})")
 
 
 class Player(Character):
-    def __init__(self, name, class_name, health, strength, magic):
+    def __init__(self, name, character_class, health, strength, magic):
         super().__init__(name, health, strength, magic)
-        self.character_class = class_name
+        self.character_class = character_class
         self.level = 1
         self.experience = 0
-        
+
     def display_stats(self):
         super().display_stats()
         print(f" Class: {self.character_class}")
@@ -101,59 +110,102 @@ class Player(Character):
 class Warrior(Player):
     def __init__(self, name):
         super().__init__(name, "Warrior", 120, 15, 5)
-        
+
     def attack(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = self.strength + 5 + bonus   # warriors hit harder
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = self.strength + 5 + weapon_bonus
+
+        if damage < 0:
+            damage = 0
+
         print(f"{self.name} (Warrior) slashes {target.name} for {damage} damage.")
         target.take_damage(damage)
-        
+
     def power_strike(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = self.strength * 2 + 10 + bonus
-        print(f"{self.name} uses Power Strike for {damage} damage!")
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = self.strength * 2 + 10 + weapon_bonus
+
+        if damage < 0:
+            damage = 0
+
+        print(f"{self.name} uses Power Strike on {target.name} for {damage} damage!")
         target.take_damage(damage)
 
 
 class Mage(Player):
     def __init__(self, name):
         super().__init__(name, "Mage", 80, 8, 20)
-        
+
     def attack(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = self.magic + bonus
-        print(f"{self.name} (Mage) casts a spell on {target.name} for {damage} damage.")
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = self.magic + weapon_bonus
+
+        if damage < 0:
+            damage = 0
+
+        print(f"{self.name} (Mage) casts a spell at {target.name} for {damage} damage.")
         target.take_damage(damage)
-        
+
     def fireball(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = self.magic * 2 + 8 + bonus
-        print(f"{self.name} hurls a Fireball for {damage} damage!")
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = self.magic * 2 + 8 + weapon_bonus
+
+        if damage < 0:
+            damage = 0
+
+        print(f"{self.name} hurls a Fireball at {target.name} for {damage} damage!")
         target.take_damage(damage)
 
 
 class Rogue(Player):
     def __init__(self, name):
         super().__init__(name, "Rogue", 90, 12, 10)
-        
-    def attack(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        base = self.strength + bonus
 
-        # 30% crit chance
-        if random.randint(1, 10) <= 3:
-            damage = base * 2
-            print(f"{self.name} (Rogue) CRITICAL strikes for {damage} damage!")
+    def attack(self, target):
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        # 30% critical chance
+        roll = random.randint(1, 10)
+        base_damage = self.strength + weapon_bonus
+
+        if roll <= 3:
+            damage = base_damage * 2
+            print(f"{self.name} (Rogue) performs a CRITICAL strike on {target.name}!")
         else:
-            damage = base
-            print(f"{self.name} (Rogue) strikes for {damage} damage.")
-        
+            damage = base_damage
+            print(f"{self.name} (Rogue) strikes {target.name}.")
+
+        if damage < 0:
+            damage = 0
+
+        print(f"Damage dealt: {damage}")
         target.take_damage(damage)
-        
+
     def sneak_attack(self, target):
-        bonus = self.weapon.damage_bonus if self.weapon else 0
-        damage = (self.strength + bonus) * 2 + 5
-        print(f"{self.name} performs a Sneak Attack for {damage} damage!")
+        weapon_bonus = 0
+        if self.weapon is not None:
+            weapon_bonus = self.weapon.damage_bonus
+
+        damage = (self.strength + weapon_bonus) * 2 + 5
+
+        if damage < 0:
+            damage = 0
+
+        print(f"{self.name} performs a Sneak Attack on {target.name} for {damage} damage!")
         target.take_damage(damage)
 
 
@@ -161,10 +213,9 @@ class Weapon:
     def __init__(self, name, damage_bonus):
         self.name = name
         self.damage_bonus = damage_bonus
-        
+
     def display_info(self):
         print(f"Weapon: {self.name} (+{self.damage_bonus} damage)")
-
 
 # ============================================================================
 # CLEAN MAIN TEST (OPTIONAL)
