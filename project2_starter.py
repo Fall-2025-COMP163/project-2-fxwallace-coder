@@ -54,23 +54,29 @@ class SimpleBattle:
 # ============================================================================
 
 class Character:
+    """Base class for all characters. Holds shared stats and actions."""
+
     def __init__(self, name, health, strength, magic):
+        # Basic stats every character has
         self.name = name
         self.health = health
         self.strength = strength
         self.magic = magic
 
     def attack(self, target):
+        """Basic attack that uses strength for damage."""
         damage = self.strength
         target.take_damage(damage)
 
     def take_damage(self, amount):
+        """Reduces health but never below 0."""
         new_health = self.health - amount
         if new_health < 0:
             new_health = 0
         self.health = new_health
 
     def display_stats(self):
+        """Prints the character's stats."""
         print("Name:", self.name)
         print("Health:", self.health)
         print("Strength:", self.strength)
@@ -78,27 +84,33 @@ class Character:
 
 
 class Player(Character):
+    """Intermediate class for all playable characters."""
+
     def __init__(self, name, character_class, health, strength, magic):
         super().__init__(name, health, strength, magic)
         self.character_class = character_class
 
 
 class Warrior(Player):
+    """Warrior class: high strength, tanky."""
+
     def __init__(self, name):
         super().__init__(name, "Warrior", 120, 15, 5)
 
     def power_strike(self, target):
-        # Stronger than normal attack
+        """Strong attack that deals double strength."""
         damage = self.strength * 2
         target.take_damage(damage)
 
 
 class Mage(Player):
+    """Mage class: high magic, uses spells."""
+
     def __init__(self, name):
         super().__init__(name, "Mage", 80, 8, 20)
 
     def fireball(self, target):
-        # Fireball damage between 10 and 50
+        """Magic attack with damage capped between 10 and 50."""
         damage = self.magic + 10
         if damage < 10:
             damage = 10
@@ -108,11 +120,13 @@ class Mage(Player):
 
 
 class Rogue(Player):
+    """Rogue class: quick attacks, high crits."""
+
     def __init__(self, name):
         super().__init__(name, "Rogue", 90, 12, 8)
 
     def sneak_attack(self, target):
-        # High damage (critical)
+        """Critical hit dealing at least 15 damage."""
         damage = self.strength * 2
         if damage < 15:
             damage = 15
@@ -120,11 +134,14 @@ class Rogue(Player):
 
 
 class Weapon:
+    """Simple weapon class used for composition."""
+
     def __init__(self, name, damage_bonus):
         self.name = name
         self.damage_bonus = damage_bonus
 
     def display_info(self):
+        """Shows weapon details. Returns None as required."""
         print("Weapon:", self.name)
         print("Damage Bonus:", self.damage_bonus)
 
