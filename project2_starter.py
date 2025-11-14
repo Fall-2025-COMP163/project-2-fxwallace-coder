@@ -161,7 +161,7 @@ class Weapon:
         self.damage_bonus = damage_bonus
         
     def display_info(self):
-        print(f"Weapon: {self.name} (Damage Bonus: +{self.damage_bonu
+        print(f"Weapon: {self.name} (Damage Bonus: +{self.damage_bonus})
 # ----------------------------- Testing --------------------------------------
 if __name__ == "__main__":
     print("=== CHARACTER ABILITIES SHOWCASE ===")
