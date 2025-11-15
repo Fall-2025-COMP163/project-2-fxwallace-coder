@@ -89,6 +89,7 @@ class Player(Character):
     def __init__(self, name, character_class, health, strength, magic):
         super().__init__(name, health, strength, magic)
         self.character_class = character_class
+        self.level = 1  
 
 
 class Warrior(Player):
